@@ -83,7 +83,10 @@ old_run = Client.run
 
 def run(self, *args, **kwargs):
     self._load_start = datetime.now()
-    return old_run(self, *args, **kwargs)
+    result = old_run(self, *args, **kwargs)
+    if hasattr(self, "on_disconnect"):
+        self.on_disconnect()
+    return result
 
 
 def load_time_getter(self):
