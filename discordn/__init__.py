@@ -1,6 +1,6 @@
 __version__ = "1.0.0"
 
-from discordn import bot, command, embed, member, client, messageable, snowflake, voiceclient
+from discordn import bot, command, embed, member, client, messageable, snowflake, voiceclient, errors
 
 
 def patch():
@@ -12,3 +12,4 @@ def patch():
     messageable.patch()
     snowflake.patch()
     voiceclient.patch()
+    errors.patch()

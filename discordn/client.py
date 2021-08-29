@@ -1,11 +1,12 @@
 import discord.utils
 from discord import Client
 
-old_activity_getter = Client.activity.fget
-
 
 def oauth_url(self, *args, **kwargs):
     return discord.utils.oauth_url(self.user.id, *args, **kwargs)
+
+
+old_activity_getter = Client.activity.fget
 
 
 def activity_getter(self):

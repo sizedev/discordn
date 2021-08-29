@@ -1,17 +1,21 @@
 import discord
+import discord.ext.commands
 import discordn
 
 discordn.patch()
 
 
-class ExampleBot(discord.Client):
+class ExampleBot(discord.ext.commands.Bot):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
         print(f"Invite url: {self.oauth_url()}")
 
-    async def on_message(self, m):
-        print(f"Message from {m.author}: {m.content}")
+
+bot = ExampleBot(command_prefix="$")
 
 
-bot = ExampleBot()
+@bot.command()
+async def test(ctx, ducks: int):
+    await ctx.send("Hello")
+
 bot.run("my token goes here")
