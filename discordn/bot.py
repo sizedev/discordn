@@ -26,6 +26,12 @@ async def process_commands(self, message):
     if message.author.bot:
         return
 
+    # F*** smart quotes.
+    message.content = message.content.replace("“", "\"")
+    message.content = message.content.replace("”", "\"")
+    message.content = message.content.replace("’", "'")
+    message.content = message.content.replace("‘", "'")
+
     contexts = []
 
     ctx = await self.get_context(message)
