@@ -65,7 +65,7 @@ async def on_first_ready(self):
             logger.warn("We can't change the username this much!")
 
     if self._init_activity is not None:
-        await self.change_presence(activity=activity)
+        await self.change_presence(activity=self._init_activity)
 
 
 def formatTraceback(err) -> str:
