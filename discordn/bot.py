@@ -7,7 +7,7 @@ from discord.ext.commands.bot import BotBase
 from discord.ext.commands import Cog
 from discord.ext import commands
 
-logger = logging.getLogger("discordn")
+logger = logging.getLogger(__package__)
 
 
 class BadMultilineCommand(commands.errors.CommandError):

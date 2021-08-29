@@ -6,7 +6,7 @@ import discord.utils
 from discord import Client
 from discord.ext import commands
 
-logger = logging.getLogger("discordn")
+logger = logging.getLogger(__package__)
 
 
 def oauth_url(self, *args, **kwargs):
