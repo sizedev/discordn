@@ -10,6 +10,18 @@ from discord.ext import commands
 logger = logging.getLogger(__package__)
 
 
+old_init = BotBase.__init__
+
+
+def init(self, *args, extensions=(), cogs=(), **kwargs):
+    old_init(self, *args, **kwargs)
+
+    for p in extensions:
+        self.load_extension(p)
+    for p in cogs:
+        self.load_extension(p)
+
+
 class BadMultilineCommand(commands.errors.CommandError):
     """A multiline command is being run in the middle of a list of commands"""
     pass
@@ -169,5 +181,6 @@ on_command_error.emojis = Emojis
 def patch():
     commands.errors.BadMultilineCommand = BadMultilineCommand
     commands.BadMultilineCommand = BadMultilineCommand
+    BotBase.__init__ = init
     BotBase.process_commands = process_commands
     BotBase.on_command_error = on_command_error

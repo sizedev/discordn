@@ -9,6 +9,7 @@ discordn.patch()
 
 class ExampleBot(discord.ext.commands.Bot):
     async def on_first_ready(self):
+        await super().on_first_ready()
         print(f"Logged on as {self.user}!")
         print(f"Invite url: {self.oauth_url()}")
         print(f"Load Time: {self.load_time}")

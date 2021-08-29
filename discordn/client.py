@@ -10,6 +10,16 @@ from discord.ext import commands
 logger = logging.getLogger(__package__)
 
 
+old_init = Client.__init__
+
+
+def init(self, *args, username=None, activity=None, **kwargs):
+    old_init(self, *args, **kwargs)
+
+    self._init_username = username
+    self._init_activity = activity
+
+
 def oauth_url(self, *args, **kwargs):
     return discord.utils.oauth_url(self.user.id, *args, **kwargs)
 
@@ -36,7 +46,6 @@ def dispatch(self, event_name, *args, **kwargs):
         has_readied = getattr(self, "_has_readied", False)
         if not has_readied:
             new_event_name = "first_ready"
-            self._load_end = datetime.now()
             self._has_readied = True
         else:
             new_event_name = "reconnect_ready"
@@ -44,6 +53,19 @@ def dispatch(self, event_name, *args, **kwargs):
     old_dispatch(self, event_name, *args, **kwargs)
     if new_event_name:
         old_dispatch(self, new_event_name, *args, **kwargs)
+
+
+async def on_first_ready(self):
+    self._load_end = datetime.now()
+
+    if self._init_username is not None and self.user.name != self._init_username:
+        try:
+            await self.user.edit(username=self._init_username)
+        except discord.errors.HTTPException:
+            logger.warn("We can't change the username this much!")
+
+    if self._init_activity is not None:
+        await self.change_presence(activity=activity)
 
 
 def formatTraceback(err) -> str:
@@ -101,9 +123,11 @@ load_time = property(fget=load_time_getter)
 
 
 def patch():
+    Client.__init__ = init
     Client.oauth_url = oauth_url
     Client.activity = activity
     Client.on_error = on_error
     Client.dispatch = dispatch
     Client.run = run
     Client.load_time = load_time
+    Client.on_first_ready = on_first_ready
