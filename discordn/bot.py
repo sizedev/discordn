@@ -13,13 +13,11 @@ logger = logging.getLogger(__package__)
 old_init = BotBase.__init__
 
 
-def init(self, *args, extensions=(), cogs=(), **kwargs):
+def init(self: BotBase, *args, extensions=(), **kwargs):
     old_init(self, *args, **kwargs)
 
-    for p in extensions:
-        self.load_extension(p)
-    for p in cogs:
-        self.load_extension(p)
+    for e in extensions:
+        self.load_extension(e)
 
 
 class BadMultilineCommand(commands.errors.CommandError):
