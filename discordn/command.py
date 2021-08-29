@@ -33,7 +33,7 @@ async def dispatch_error(self, ctx, error):
         except Exception as e:
             error = e
 
-    if not handled and cog is None:
+    if not handled and cog is not None:
         cog_on_error = Cog._get_overridden_method(cog.cog_command_error)
         if cog_on_error is not None:
             wrapped_cog_on_error = wrap_callback(cog_on_error)
