@@ -8,9 +8,10 @@ discordn.patch()
 
 
 class ExampleBot(discord.ext.commands.Bot):
-    async def on_ready(self):
+    async def on_first_ready(self):
         print(f"Logged on as {self.user}!")
         print(f"Invite url: {self.oauth_url()}")
+        print(f"Load Time: {self.load_time}")
 
 
 bot = ExampleBot(command_prefix="$")

@@ -1,6 +1,7 @@
 import sys
 import logging
 import traceback
+from datetime import datetime
 
 import discord.utils
 from discord import Client
@@ -29,15 +30,20 @@ old_dispatch = Client.dispatch
 
 
 def dispatch(self, event_name, *args, **kwargs):
-    old_dispatch(self, event_name, *args, **kwargs)
+    new_event_name = None
+
     if event_name == "ready":
         has_readied = getattr(self, "_has_readied", False)
-        if has_readied:
-            event_name = "first_ready"
+        if not has_readied:
+            new_event_name = "first_ready"
+            self._load_end = datetime.now()
             self._has_readied = True
         else:
-            event_name = "reconnect_ready"
-        old_dispatch(self, event_name, *args, **kwargs)
+            new_event_name = "reconnect_ready"
+
+    old_dispatch(self, event_name, *args, **kwargs)
+    if new_event_name:
+        old_dispatch(self, new_event_name, *args, **kwargs)
 
 
 def formatTraceback(err) -> str:
@@ -72,8 +78,29 @@ async def on_error(self, event, *args, **kwargs):
         logger.error(formatTraceback(error))
 
 
+old_run = Client.run
+
+
+def run(self, *args, **kwargs):
+    self._load_start = datetime.now()
+    return old_run(self, *args, **kwargs)
+
+
+def load_time_getter(self):
+    start = getattr(self, "_load_start", None)
+    end = getattr(self, "_load_end", None)
+    if start is None or end is None:
+        return None
+    return end - start
+
+
+load_time = property(fget=load_time_getter)
+
+
 def patch():
     Client.oauth_url = oauth_url
     Client.activity = activity
     Client.on_error = on_error
     Client.dispatch = dispatch
+    Client.run = run
+    Client.load_time = load_time
