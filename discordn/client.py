@@ -25,6 +25,21 @@ def activity_getter(self):
 activity = property(fget=activity_getter, fset=Client.activity.fset)
 
 
+old_dispatch = Client.dispatch
+
+
+def dispatch(self, event_name, *args, **kwargs):
+    old_dispatch(self, event_name, *args, **kwargs)
+    if event_name == "ready":
+        has_readied = getattr(self, "_has_readied", False)
+        if has_readied:
+            event_name = "first_ready"
+            self._has_readied = True
+        else:
+            event_name = "reconnect_ready"
+        old_dispatch(self, event_name, *args, **kwargs)
+
+
 def formatTraceback(err) -> str:
     return "".join(traceback.format_exception(type(err), err, err.__traceback__))
 
@@ -61,3 +76,4 @@ def patch():
     Client.oauth_url = oauth_url
     Client.activity = activity
     Client.on_error = on_error
+    Client.dispatch = dispatch

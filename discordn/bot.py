@@ -72,22 +72,6 @@ async def process_commands(self, message):
         await self.invoke(ctx)
 
 
-old_dispatch = BotBase.dispatch
-first_ready = True
-
-
-def dispatch(self, event_name, *args, **kwargs):
-    global first_ready
-    old_dispatch(self, event_name, *args, **kwargs)
-    if event_name == "ready":
-        if first_ready:
-            event_name = "first_ready"
-            first_ready = False
-        else:
-            event_name = "reconnect_ready"
-        old_dispatch(self, event_name, *args, **kwargs)
-
-
 def formatTraceback(err) -> str:
     return "".join(traceback.format_exception(type(err), err, err.__traceback__))
 
@@ -180,5 +164,4 @@ def patch():
     commands.errors.BadMultilineCommand = BadMultilineCommand
     commands.BadMultilineCommand = BadMultilineCommand
     BotBase.process_commands = process_commands
-    BotBase.dispatch = dispatch
     BotBase.on_command_error = on_command_error
