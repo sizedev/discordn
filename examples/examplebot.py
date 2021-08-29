@@ -1,3 +1,5 @@
+import os
+
 import discord
 import discord.ext.commands
 import discordn
@@ -18,4 +20,5 @@ bot = ExampleBot(command_prefix="$")
 async def test(ctx, ducks: int):
     await ctx.send("Hello")
 
-bot.run("my token goes here")
+token = os.environ["DISCORD_TOKEN"]
+bot.run(token)
