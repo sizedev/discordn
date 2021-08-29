@@ -1,4 +1,4 @@
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 from . import bot, command, embed, member, client, messageable, snowflake, tasks, voiceclient, errors
 
