@@ -178,9 +178,17 @@ async def on_command_error(self, ctx, exception):
 on_command_error.emojis = Emojis
 
 
+async def on_message_edit(self, before, after):
+    # run editted commands
+    if before.content == after.content:
+        return
+    await self.process_commands(after)
+
+
 def patch():
     commands.errors.BadMultilineCommand = BadMultilineCommand
     commands.BadMultilineCommand = BadMultilineCommand
     BotBase.__init__ = init
     BotBase.process_commands = process_commands
     BotBase.on_command_error = on_command_error
+    BotBase.on_message_edit = on_message_edit
